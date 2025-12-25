@@ -1,5 +1,6 @@
 #!/bin/bash
 
+ORG=arceos-hypervisor
 ROOT=https://github.com/arceos-hypervisor
 CRATES=(
     "arm_gicv2"
