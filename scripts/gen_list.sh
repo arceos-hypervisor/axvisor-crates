@@ -5,14 +5,18 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 source "$SCRIPT_DIR/crate_list.sh"
 
 # Make the second column larger via &nbsp;
-echo '| Crate | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;crates.io&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Documentation | Description |'
-echo '|----|---|:--:|----|'
+echo '| Crate | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;crates.io&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Documentation | Upstream | Description |'
+echo '|----|:--:|:--:|:--:|----|'
 
 count=0
 
 for repo in "${REPOS[@]}"; do
   pushd crates/$repo >/dev/null
   branch=""
+
+  upstream="$(gh api repos/arceos-hypervisor/$repo --jq '.parent.full_name')"
+  upstream=${upstream:+"[$upstream](https://github.com/$upstream)"}
+  : ${upstream:="N/A"}
 
   while read -r crate manifest_path description; do
 
@@ -44,7 +48,8 @@ for repo in "${REPOS[@]}"; do
     fi
 
     description="$description."
-    echo "| [$crate]($url) | $crates_io | $doc | $description |"
+
+    echo "| [$crate]($url) | $crates_io | $doc | $upstream | $description |"
 
     # Process substitution to make the count work as expected.
   done < <(cargo metadata --no-deps --format-version 1 |
