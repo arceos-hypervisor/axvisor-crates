@@ -22,9 +22,6 @@
 [submodule "crates/axaddrspace"]
 	path = crates/axaddrspace
 	url = https://github.com/arceos-hypervisor/axaddrspace.git
-[submodule "crates/axvirtio"]
-	path = crates/axvirtio
-	url = https://github.com/arceos-hypervisor/axvirtio.git
 [submodule "crates/axvmconfig"]
 	path = crates/axvmconfig
 	url = https://github.com/arceos-hypervisor/axvmconfig.git
@@ -40,3 +37,6 @@
 [submodule "crates/riscv-h"]
 	path = crates/riscv-h
 	url = https://github.com/arceos-hypervisor/riscv-h.git
+[submodule "crates/axvirtio-devices"]
+	path = crates/axvirtio-devices
+	url = https://github.com/arceos-hypervisor/axvirtio-devices.git
