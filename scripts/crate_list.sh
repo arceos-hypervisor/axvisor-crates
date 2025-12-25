@@ -1,5 +1,18 @@
 #!/bin/bash
 
+# The REPOS should be the only entry point to init and generate crate list.
+#
+# The steps to add a new repo:
+# * add the repo name to REPOS
+# * `./scripts/submodule.sh init` to add it as a submodule and sort .gitmodules
+# * `./scripts/submodule.sh update` to download the submodule
+# * `./scripts/gen_list.sh > tmp.txt` and replace the list in README by tmp.txt
+#
+# The steps to remove a repo:
+# * remove it from REPOS
+# * remove it from .gitmodules (and probably also from your local repo config)
+# * follow the same steps in adding a repo as above
+
 ORG=arceos-hypervisor
 ROOT=https://github.com/arceos-hypervisor
 REPOS=(
