@@ -1,20 +1,8 @@
 #!/bin/bash
 
-# The REPOS should be the only entry point to init and generate crate list.
-#
-# Steps to add a new repo:
-# * add the repo name to REPOS
-# * `./scripts/submodule.sh init` to add it as a submodule and sort .gitmodules
-# * `./scripts/submodule.sh update` to download the submodule
-# * `./scripts/crate_list.sh gen` to update the list in README
-#
-# Steps to remove a repo:
-# * remove it from REPOS
-# * remove it from .gitmodules (and probably also from your local repo config)
-# * `./scripts/crate_list.sh gen` to update the list in README
-
 ORG=arceos-hypervisor
 ROOT=https://github.com/arceos-hypervisor
+# The REPOS should be the only entry point to init and generate crate list.
 REPOS=(
   "arm_vcpu"
   "arm_vgic"
@@ -36,7 +24,7 @@ REPOS=(
   "x86_vlapic"
 )
 
-# Run as `scripts/crate_list.sh gen`
+# Run as `scripts/crate_list.sh gen` to update README crate list.
 if [[ "$1" == "gen" ]]; then
   SCRIPT_DIR=$(dirname "$(realpath "$0")")
   TARGET_FILE=$(realpath "$SCRIPT_DIR/../README.md")
@@ -47,8 +35,10 @@ if [[ "$1" == "gen" ]]; then
     exit 1
   fi
 
+  # Generate new crate list and write it to a txt.
   "$SCRIPT_DIR/gen_list.sh" | tee "$SOURCE_FILE"
 
+  # Update crate list in README.
   awk '
   NR==FNR {
     new_content = (FNR == 1 ? $0 : new_content ORS $0)
@@ -78,27 +68,11 @@ is_repo() {
   return 1
 }
 
-# Run as `crate_list.sh is_repo name`
+# Run as `crate_list.sh is_repo name`. Only used in `gen_list.sh`.
 if [[ "$1" == "is_repo" && -n "$2" ]] && ! is_repo $2; then
   # The name is not an expected repo.
   exit 1
 fi
-
-# Accept the crate name and return the potential crate url.
-get_crate_url() {
-  local name=$1
-  local len=${#name}
-
-  if [ "$len" -eq 1 ]; then
-    echo "https://index.crates.io/1/$name"
-  elif [ "$len" -eq 2 ]; then
-    echo "https://index.crates.io/2/$name"
-  elif [ "$len" -eq 3 ]; then
-    echo "https://index.crates.io/3/${name:0:1}/$name"
-  else
-    echo "https://index.crates.io/${name:0:2}/${name:2:2}/$name"
-  fi
-}
 
 CRATES_HIDDEN=(
   "axvisor_api_proc"

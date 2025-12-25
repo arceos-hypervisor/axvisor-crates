@@ -11,6 +11,22 @@ echo '
 
 count=0
 
+# Accept the crate name and return the potential crate url.
+get_crate_url() {
+  local name=$1
+  local len=${#name}
+
+  if [ "$len" -eq 1 ]; then
+    echo "https://index.crates.io/1/$name"
+  elif [ "$len" -eq 2 ]; then
+    echo "https://index.crates.io/2/$name"
+  elif [ "$len" -eq 3 ]; then
+    echo "https://index.crates.io/3/${name:0:1}/$name"
+  else
+    echo "https://index.crates.io/${name:0:2}/${name:2:2}/$name"
+  fi
+}
+
 for repo in "${REPOS[@]}"; do
   pushd crates/$repo >/dev/null
   branch=""
