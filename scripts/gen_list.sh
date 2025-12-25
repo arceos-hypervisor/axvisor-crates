@@ -15,8 +15,7 @@ for repo in "${REPOS[@]}"; do
   branch=""
 
   upstream="$(gh api repos/arceos-hypervisor/$repo --jq '.parent.full_name')"
-  upstream=${upstream:+"[$upstream](https://github.com/$upstream)"}
-  : ${upstream:="N/A"}
+  [[ -n "$upstream" ]] && upstream="[$upstream](https://github.com/$upstream)" || upstream="N/A"
 
   while read -r crate manifest_path description; do
 
@@ -47,7 +46,7 @@ for repo in "${REPOS[@]}"; do
       doc="[![Docs.rs](https://img.shields.io/badge/docs-pages-green)]($doc_url)"
     fi
 
-    description="$description."
+    [[ "$description" == "null" ]] && description="N/A" || description="$description."
 
     echo "| [$crate]($url) | $crates_io | $doc | $upstream | $description |"
 
