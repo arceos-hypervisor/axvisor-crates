@@ -1,20 +1,8 @@
 #!/bin/bash
 
-ROOT=https://github.com/arceos-hypervisor
-CRATES=(
-    "arm_vcpu"
-    "arm_vgic"
-    "x86_vcpu"
-    "x86_vlapic"
-    "riscv_vcpu"
-    "axvisor_api"
-    "axaddrspace"
-    "axdevice_base"
-    "axvmconfig"
-    "axvcpu"
-    "axvirtio-blk"
-    "axvirtio-common"
-)
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+# Import $ROOT and $CRATES.
+source "$SCRIPT_DIR/crate_list.sh"
 
 echo '| Crate | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[crates.io](crates.io)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Documentation | Description |'
 echo '|----|:--:|:--:|----|'

@@ -7,24 +7,13 @@ if [ -z $cmd ]; then
     exit 1
 fi
 
-ROOT=https://github.com/arceos-hypervisor
-REPOS=(
-    "arm_vcpu"
-    "arm_vgic"
-    "x86_vcpu"
-    "x86_vlapic"
-    "riscv_vcpu"
-    "axvisor_api"
-    "axaddrspace"
-    "axdevice_base"
-    "axvmconfig"
-    "axvcpu"
-    "axvirtio"
-)
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+# Import $ROOT and $CRATES.
+source "$SCRIPT_DIR/crate_list.sh"
 
 mkdir -p crates
 
-for repo in ${REPOS[@]};
+for repo in ${CRATES[@]};
 do
     if [ "$cmd" == "init" ]; then
         git submodule add $ROOT/$repo.git crates/$repo
