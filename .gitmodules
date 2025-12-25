@@ -1,6 +1,3 @@
-[submodule "crates/arm_gicv2"]
-  path = crates/arm_gicv2
-  url = https://github.com/arceos-hypervisor/arm_gicv2.git
 [submodule "crates/arm_vcpu"]
   path = crates/arm_vcpu
   url = https://github.com/arceos-hypervisor/arm_vcpu.git

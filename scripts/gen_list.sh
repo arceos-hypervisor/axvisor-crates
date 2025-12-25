@@ -10,7 +10,7 @@ echo '|----|---|:--:|----|'
 
 count=0
 
-for repo in ${REPOS[@]}; do
+for repo in "${REPOS[@]}"; do
   pushd crates/$repo >/dev/null
   branch=""
 
