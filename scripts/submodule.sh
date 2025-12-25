@@ -13,7 +13,7 @@ source "$SCRIPT_DIR/crate_list.sh"
 
 mkdir -p crates
 
-for repo in ${CRATES[@]};
+for repo in ${REPOS[@]};
 do
     if [ "$cmd" == "init" ]; then
         git submodule add $ROOT/$repo.git crates/$repo

@@ -1,35 +1,24 @@
 #!/bin/bash
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
-# Import $ROOT and $CRATES.
+# Import variables.
 source "$SCRIPT_DIR/crate_list.sh"
 
 # Make the second column larger via &nbsp;
 echo '| Crate | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;crates.io&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Documentation | Description |'
 echo '|----|---|:--:|----|'
 
-get_crate_url() {
-  local name=$1
-  local len=${#name}
-
-  if [ "$len" -eq 1 ]; then
-    echo "https://index.crates.io/1/$name"
-  elif [ "$len" -eq 2 ]; then
-    echo "https://index.crates.io/2/$name"
-  elif [ "$len" -eq 3 ]; then
-    echo "https://index.crates.io/3/${name:0:1}/$name"
-  else
-    echo "https://index.crates.io/${name:0:2}/${name:2:2}/$name"
-  fi
-}
-
-for repo in ${CRATES[@]}; do
+for repo in ${REPOS[@]}; do
   pushd crates/$repo >/dev/null
   branch=""
 
   cargo metadata --no-deps --format-version 1 |
     jq -cr '.packages | .[] | "\(.name) \(.manifest_path) \(.description)"' |
     while read -r crate manifest_path description; do
+
+      if is_hidden_crate $crate; then
+        continue
+      fi
 
       folder=${manifest_path#$PWD/}
       folder=${folder%Cargo.toml}
