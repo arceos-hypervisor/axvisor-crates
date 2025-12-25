@@ -2,16 +2,16 @@
 
 # The REPOS should be the only entry point to init and generate crate list.
 #
-# The steps to add a new repo:
+# Steps to add a new repo:
 # * add the repo name to REPOS
 # * `./scripts/submodule.sh init` to add it as a submodule and sort .gitmodules
 # * `./scripts/submodule.sh update` to download the submodule
-# * `./scripts/gen_list.sh > tmp.txt` and replace the list in README by tmp.txt
+# * `./scripts/crate_list.sh gen` to update the list in README
 #
-# The steps to remove a repo:
+# Steps to remove a repo:
 # * remove it from REPOS
 # * remove it from .gitmodules (and probably also from your local repo config)
-# * follow the same steps in adding a repo as above
+# * `./scripts/crate_list.sh gen` to update the list in README
 
 ORG=arceos-hypervisor
 ROOT=https://github.com/arceos-hypervisor
@@ -36,6 +36,39 @@ REPOS=(
   "x86_vlapic"
 )
 
+# Run as `scripts/crate_list.sh gen`
+if [[ "$1" == "gen" ]]; then
+  SCRIPT_DIR=$(dirname "$(realpath "$0")")
+  TARGET_FILE=$(realpath "$SCRIPT_DIR/../README.md")
+  SOURCE_FILE="list.txt"
+
+  if [ ! -f "$TARGET_FILE" ]; then
+    echo "$TARGET_FILE doesn't exits!"
+    exit 1
+  fi
+
+  "$SCRIPT_DIR/gen_list.sh" | tee "$SOURCE_FILE"
+
+  awk '
+  NR==FNR {
+    new_content = (FNR == 1 ? $0 : new_content ORS $0)
+    next
+  }
+  /<!-- crate-list-start -->/ {
+    print $0
+    print new_content
+    skip = 1
+    next
+  }
+  /<!-- crate-list-end -->/ {
+    skip = 0
+  }
+  !skip { print $0 }
+' "$SOURCE_FILE" "$TARGET_FILE" >temp.md &&
+    mv temp.md "$TARGET_FILE" &&
+    rm "$SOURCE_FILE"
+fi
+
 is_repo() {
   for repo in "${REPOS[@]}"; do
     if [[ "$1" == "$repo" ]]; then
@@ -45,7 +78,7 @@ is_repo() {
   return 1
 }
 
-# Run as `./crate_list.sh is_repo name`
+# Run as `crate_list.sh is_repo name`
 if [[ "$1" == "is_repo" && -n "$2" ]] && ! is_repo $2; then
   # The name is not an expected repo.
   exit 1

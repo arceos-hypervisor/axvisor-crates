@@ -4,6 +4,8 @@ Reusable crates list for [AxVisor](https://github.com/arceos-hypervisor/axvisor)
 
 ## Crate List
 
+<!-- crate-list-start -->
+
 | Crate | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;crates.io&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Documentation | Upstream | Description |
 |----|:--:|:--:|:--:|----|
 | [arm_vcpu](https://github.com/arceos-hypervisor/arm_vcpu) | [![Crates.io](https://img.shields.io/crates/v/arm_vcpu)](https://crates.io/crates/arm_vcpu) | [![Docs.rs](https://docs.rs/arm_vcpu/badge.svg)](https://docs.rs/arm_vcpu) | N/A | Aarch64 VCPU implementation for Arceos Hypervisor. |
@@ -27,6 +29,8 @@ Reusable crates list for [AxVisor](https://github.com/arceos-hypervisor/axvisor)
 | [x86_vlapic](https://github.com/arceos-hypervisor/x86_vlapic) | [![Crates.io](https://img.shields.io/crates/v/x86_vlapic)](https://crates.io/crates/x86_vlapic) | [![Docs.rs](https://docs.rs/x86_vlapic/badge.svg)](https://docs.rs/x86_vlapic) | N/A | x86 Virtual Local APIC. |
 
 Total 19 crates from arceos-hypervisor are available!
+
+<!-- crate-list-end -->
 
 ## Crate Dependency
 

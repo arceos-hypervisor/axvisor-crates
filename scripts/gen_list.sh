@@ -5,8 +5,9 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 source "$SCRIPT_DIR/crate_list.sh"
 
 # Make the second column larger via &nbsp;
-echo '| Crate | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;crates.io&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Documentation | Upstream | Description |'
-echo '|----|:--:|:--:|:--:|----|'
+echo '
+| Crate | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;crates.io&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Documentation | Upstream | Description |
+|----|:--:|:--:|:--:|----|'
 
 count=0
 
@@ -61,4 +62,4 @@ for repo in "${REPOS[@]}"; do
   popd >/dev/null
 done
 
-printf "\nTotal $count crates from $ORG are available!\n"
+printf "\nTotal $count crates from $ORG are available!\n\n"
