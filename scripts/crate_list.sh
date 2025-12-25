@@ -3,16 +3,20 @@
 ORG=arceos-hypervisor
 ROOT=https://github.com/arceos-hypervisor
 REPOS=(
-  "arm_gicv2"
   "arm_vcpu"
   "arm_vgic"
   "axaddrspace"
+  "axcpu"
+  "axdevice"
   "axdevice_base"
+  "axhvc"
+  "axplat-aarch64-dyn"
   "axvcpu"
   "axvirtio-devices"
   "axvisor_api"
   "axvm"
   "axvmconfig"
+  "range-alloc"
   "riscv-h"
   "riscv_vcpu"
   "x86_vcpu"

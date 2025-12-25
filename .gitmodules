@@ -10,9 +10,21 @@
 [submodule "crates/axaddrspace"]
   path = crates/axaddrspace
   url = https://github.com/arceos-hypervisor/axaddrspace.git
+[submodule "crates/axcpu"]
+  path = crates/axcpu
+  url = https://github.com/arceos-hypervisor/axcpu.git
+[submodule "crates/axdevice"]
+  path = crates/axdevice
+  url = https://github.com/arceos-hypervisor/axdevice.git
 [submodule "crates/axdevice_base"]
   path = crates/axdevice_base
   url = https://github.com/arceos-hypervisor/axdevice_base.git
+[submodule "crates/axhvc"]
+  path = crates/axhvc
+  url = https://github.com/arceos-hypervisor/axhvc.git
+[submodule "crates/axplat-aarch64-dyn"]
+  path = crates/axplat-aarch64-dyn
+  url = https://github.com/arceos-hypervisor/axplat-aarch64-dyn.git
 [submodule "crates/axvcpu"]
   path = crates/axvcpu
   url = https://github.com/arceos-hypervisor/axvcpu.git
@@ -28,6 +40,9 @@
 [submodule "crates/axvmconfig"]
   path = crates/axvmconfig
   url = https://github.com/arceos-hypervisor/axvmconfig.git
+[submodule "crates/range-alloc"]
+  path = crates/range-alloc
+  url = https://github.com/arceos-hypervisor/range-alloc.git
 [submodule "crates/riscv-h"]
   path = crates/riscv-h
   url = https://github.com/arceos-hypervisor/riscv-h.git
