@@ -43,7 +43,11 @@ for repo in "${REPOS[@]}"; do
       # Not in crates.io
       crates_io="N/A"
       doc_url="https://arceos-hypervisor.github.io/$repo"
-      doc="[![Docs.rs](https://img.shields.io/badge/docs-pages-green)]($doc_url)"
+      if curl --output /dev/null --silent --head --fail $doc_url; then
+        doc="[![Docs.rs](https://img.shields.io/badge/docs-pages-green)]($doc_url)"
+      else
+        doc="N/A"
+      fi
     fi
 
     [[ "$description" == "null" ]] && description="N/A" || description="$description."
