@@ -1,66 +1,81 @@
 #!/bin/bash
 
-ROOT=https://github.com/arceos-hypervisor
-CRATES=(
-    "arm_vcpu"
-    "arm_vgic"
-    "x86_vcpu"
-    "x86_vlapic"
-    "riscv_vcpu"
-    "axvisor_api"
-    "axaddrspace"
-    "axdevice_base"
-    "axvmconfig"
-    "axvcpu"
-    "axvirtio-blk"
-    "axvirtio-common"
-)
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+# Import variables.
+source "$SCRIPT_DIR/crate_list.sh"
 
-echo '| Crate | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[crates.io](crates.io)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Documentation | Description |'
-echo '|----|:--:|:--:|----|'
+# Make the second column larger via &nbsp;
+echo '
+| Crate | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;crates.io&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Documentation | Upstream | Description |
+|----|:--:|:--:|:--:|----|'
 
-for c in ${CRATES[@]};
-do
-    subcrate=0
-    platform_crate=0
-    if [[ $c == axvirtio-* ]]; then
-        repo="axvirtio"
-        subcrate=1
-    else
-        repo="$c"
-        subcrate=0
+count=0
+
+# Accept the crate name and return the potential crate url.
+get_crate_url() {
+  local name=$1
+  local len=${#name}
+
+  if [ "$len" -eq 1 ]; then
+    echo "https://index.crates.io/1/$name"
+  elif [ "$len" -eq 2 ]; then
+    echo "https://index.crates.io/2/$name"
+  elif [ "$len" -eq 3 ]; then
+    echo "https://index.crates.io/3/${name:0:1}/$name"
+  else
+    echo "https://index.crates.io/${name:0:2}/${name:2:2}/$name"
+  fi
+}
+
+for repo in "${REPOS[@]}"; do
+  pushd crates/$repo >/dev/null
+  branch=""
+
+  upstream="$(gh api repos/arceos-hypervisor/$repo --jq '.parent.full_name')"
+  [[ -n "$upstream" ]] && upstream="[$upstream](https://github.com/$upstream)" || upstream="N/A"
+
+  while read -r crate manifest_path description; do
+
+    if is_hidden_crate $crate; then
+      continue
     fi
 
-    if [[ $subcrate == 0 ]]; then
-        url="$ROOT/$c"
-        toml="crates/$repo/Cargo.toml"
-    elif [[ $platform_crate == 1 ]]; then
-        url="$ROOT/$repo/tree/main/platforms/$c"
-        toml="crates/$repo/platforms/$c/Cargo.toml"
+    count=$((count + 1))
+
+    folder=${manifest_path#$PWD/}
+    folder=${folder%Cargo.toml}
+    # folder is empty if the toml is right under the project root
+    if [[ -z $folder ]]; then
+      url="$ROOT/$repo"
     else
-        url="$ROOT/$repo/tree/main/$c"
-        toml="crates/$repo/$c/Cargo.toml"
+      : ${branch:=$(curl -s https://api.github.com/repos/$ORG/$repo | jq -r .default_branch)}
+      url="$ROOT/$repo/tree/$branch/$folder"
     fi
 
-    description=`cat $toml | sed -n 's/^description = "\([^"]*\)"/\1/p'`
-    if [[ $description != *. ]]; then
-        description+="."
-    fi
-
-    if [[ `curl -s https://crates.io/api/v1/crates/$c | grep arceos-hypervisor` ]]
-    then
-        # In crates.io
-        crates_io="[![Crates.io](https://img.shields.io/crates/v/$c)](https://crates.io/crates/$c)"
-        doc="[![Docs.rs](https://docs.rs/$c/badge.svg)](https://docs.rs/$c)"
+    if curl --output /dev/null --silent --head --fail $(get_crate_url $crate); then
+      # In crates.io
+      crates_io="[![Crates.io](https://img.shields.io/crates/v/$crate)](https://crates.io/crates/$crate)"
+      doc="[![Docs.rs](https://docs.rs/$crate/badge.svg)](https://docs.rs/$crate)"
     else
-        # Not in crates.io
-        crates_io="N/A"
-        if [[ $subcrate == 1 ]]; then
-            doc_url="https://arceos-hypervisor.github.io/$repo/$c"
-        else
-            doc_url="https://arceos-hypervisor.github.io/$c"
-        fi
+      # Not in crates.io
+      crates_io="N/A"
+      doc_url="https://arceos-hypervisor.github.io/$repo"
+      if curl --output /dev/null --silent --head --fail $doc_url; then
         doc="[![Docs.rs](https://img.shields.io/badge/docs-pages-green)]($doc_url)"
+      else
+        doc="N/A"
+      fi
     fi
-    echo "| [$c]($url) | $crates_io | $doc | $description |"
+
+    [[ "$description" == "null" ]] && description="N/A" || description="$description."
+
+    echo "| [$crate]($url) | $crates_io | $doc | $upstream | $description |"
+
+    # Process substitution to make the count work as expected.
+  done < <(cargo metadata --no-deps --format-version 1 |
+    jq -cr '.packages | .[] | "\(.name) \(.manifest_path) \(.description)"')
+
+  popd >/dev/null
 done
+
+printf "\nTotal $count crates from $ORG are available!\n\n"
